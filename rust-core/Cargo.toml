@@ -1,0 +1,64 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "crates/analyzer-core",
+    "crates/analyzer-python",
+    "crates/analyzer-typescript",
+    "crates/analyzer-rust",
+    "crates/python-bindings",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+authors = ["Contexta Team"]
+license = "MIT"
+repository = "https://github.com/your-org/contexta-mcp-core"
+
+[workspace.dependencies]
+# Core dependencies
+tree-sitter = "0.25"
+tree-sitter-python = "0.25"
+tree-sitter-typescript = "0.23"
+tree-sitter-rust = "0.23"
+
+# PyO3 FFI
+pyo3 = { version = "0.27", features = ["extension-module", "abi3-py311"] }
+pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"] }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Parallelism
+rayon = "1.10"
+
+# Storage
+rusqlite = { version = "0.32", features = ["bundled"] }
+
+# File watching
+notify = "7.0"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Utilities
+anyhow = "1.0"
+thiserror = "2.0"
+
+# Keyring (for token storage)
+keyring = "3.6"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
+
+[profile.dev]
+opt-level = 0
+
+[profile.bench]
+inherits = "release"

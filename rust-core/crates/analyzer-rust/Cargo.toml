@@ -1,0 +1,31 @@
+[package]
+name = "analyzer-rust"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[lib]
+name = "analyzer_rust"
+path = "src/lib.rs"
+
+[dependencies]
+# Core dependencies
+analyzer-core = { path = "../analyzer-core" }
+
+# Tree-sitter
+tree-sitter.workspace = true
+tree-sitter-rust.workspace = true
+
+# Serialization
+serde = { workspace = true }
+serde_json = { workspace = true }
+
+# Error handling
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3.8"
