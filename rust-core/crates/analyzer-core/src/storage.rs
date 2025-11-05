@@ -12,17 +12,51 @@ pub fn init_schema(db_path: &Path) -> Result<Connection> {
     let conn = Connection::open(db_path)
         .context("Failed to open SQLite database")?;
 
+    // ========================================
+    // Performance Optimizations (PRAGMA settings)
+    // ========================================
+
     // Enable Write-Ahead Logging (WAL) mode for better concurrency
+    // Allows multiple readers + 1 writer simultaneously
     conn.pragma_update(None, "journal_mode", "WAL")
         .context("Failed to enable WAL mode")?;
 
-    // Increase cache size to 100MB
+    // Increase cache size to 100MB (negative = kibibytes)
+    // More cache = fewer disk I/O operations
     conn.pragma_update(None, "cache_size", -102400)
         .context("Failed to set cache size")?;
 
     // Use memory-mapped I/O for reads (256MB)
+    // Faster reads by mapping DB pages into memory
     conn.pragma_update(None, "mmap_size", 268435456)
         .context("Failed to set mmap size")?;
+
+    // Synchronous = NORMAL (faster writes, still safe with WAL)
+    // FULL is slower but safer, NORMAL is good balance with WAL
+    conn.pragma_update(None, "synchronous", "NORMAL")
+        .context("Failed to set synchronous mode")?;
+
+    // Temp store in memory (faster temp tables/indexes)
+    conn.pragma_update(None, "temp_store", "MEMORY")
+        .context("Failed to set temp store")?;
+
+    // Auto vacuum incremental (reclaim space gradually)
+    conn.pragma_update(None, "auto_vacuum", "INCREMENTAL")
+        .context("Failed to set auto vacuum")?;
+
+    // Page size = 4KB (optimal for modern SSDs)
+    // Must be set before creating tables
+    conn.pragma_update(None, "page_size", 4096)
+        .context("Failed to set page size")?;
+
+    // Larger WAL checkpoint threshold (10000 pages ~= 40MB)
+    // Fewer checkpoints = better write performance
+    conn.pragma_update(None, "wal_autocheckpoint", 10000)
+        .context("Failed to set WAL autocheckpoint")?;
+
+    // Optimize for multi-threaded access
+    conn.pragma_update(None, "locking_mode", "NORMAL")
+        .context("Failed to set locking mode")?;
 
     // Create tables
     conn.execute_batch(

@@ -1,0 +1,198 @@
+{
+  "version": "0.1.0",
+  "description": "Performance baseline metrics for Contexta indexing operations",
+  "generated_at": "2025-01-05T00:00:00Z",
+  "hardware": {
+    "note": "These baselines are measured on M1 Mac (8-core ARM64). Adjust for your hardware.",
+    "cpu": "Apple M1 (ARM64)",
+    "cores": 8,
+    "ram_gb": 16
+  },
+  "benchmarks": {
+    "file_discovery": {
+      "description": "Time to discover files in a directory tree",
+      "unit": "microseconds (µs)",
+      "targets": {
+        "10_files": {
+          "mean": 150,
+          "std_dev": 20,
+          "max_acceptable": 300,
+          "note": "Small project discovery"
+        },
+        "100_files": {
+          "mean": 800,
+          "std_dev": 100,
+          "max_acceptable": 1500,
+          "note": "Medium project discovery"
+        },
+        "1000_files": {
+          "mean": 5000,
+          "std_dev": 500,
+          "max_acceptable": 10000,
+          "note": "Large project discovery"
+        }
+      }
+    },
+    "file_parsing": {
+      "description": "Time to parse a Python file with tree-sitter",
+      "unit": "microseconds (µs)",
+      "targets": {
+        "100_lines": {
+          "mean": 200,
+          "std_dev": 30,
+          "max_acceptable": 500,
+          "note": "Small file parsing"
+        },
+        "500_lines": {
+          "mean": 800,
+          "std_dev": 100,
+          "max_acceptable": 2000,
+          "note": "Medium file parsing"
+        },
+        "1000_lines": {
+          "mean": 1500,
+          "std_dev": 200,
+          "max_acceptable": 4000,
+          "note": "Large file parsing"
+        }
+      }
+    },
+    "symbol_extraction": {
+      "description": "Time to extract symbols (functions, classes) from parsed AST",
+      "unit": "microseconds (µs)",
+      "targets": {
+        "10_symbols": {
+          "mean": 50,
+          "std_dev": 10,
+          "max_acceptable": 150,
+          "note": "Small symbol extraction"
+        },
+        "50_symbols": {
+          "mean": 200,
+          "std_dev": 30,
+          "max_acceptable": 500,
+          "note": "Medium symbol extraction"
+        },
+        "100_symbols": {
+          "mean": 400,
+          "std_dev": 50,
+          "max_acceptable": 1000,
+          "note": "Large symbol extraction"
+        }
+      }
+    },
+    "database_insert": {
+      "description": "Time to insert file metadata into SQLite",
+      "unit": "microseconds (µs)",
+      "targets": {
+        "1_file": {
+          "mean": 100,
+          "std_dev": 20,
+          "max_acceptable": 300,
+          "note": "Single file insert"
+        },
+        "100_files_batch": {
+          "mean": 5000,
+          "std_dev": 500,
+          "max_acceptable": 15000,
+          "note": "Batch insert (100 files)"
+        },
+        "1000_files_batch": {
+          "mean": 40000,
+          "std_dev": 5000,
+          "max_acceptable": 100000,
+          "note": "Large batch insert (1000 files)"
+        }
+      }
+    },
+    "database_query": {
+      "description": "Time to query indexed files from SQLite",
+      "unit": "microseconds (µs)",
+      "targets": {
+        "list_by_language": {
+          "mean": 500,
+          "std_dev": 100,
+          "max_acceptable": 2000,
+          "note": "List files by language filter"
+        },
+        "find_by_path": {
+          "mean": 200,
+          "std_dev": 50,
+          "max_acceptable": 1000,
+          "note": "Find file by exact path"
+        },
+        "symbol_search": {
+          "mean": 1000,
+          "std_dev": 200,
+          "max_acceptable": 5000,
+          "note": "Search symbols by name pattern"
+        }
+      }
+    },
+    "parallel_indexing": {
+      "description": "Time to index multiple files in parallel (rayon)",
+      "unit": "milliseconds (ms)",
+      "targets": {
+        "100_files_parallel": {
+          "mean": 50,
+          "std_dev": 10,
+          "max_acceptable": 150,
+          "note": "100 files with 8-core parallelism",
+          "speedup_over_sequential": "~6x"
+        },
+        "1000_files_parallel": {
+          "mean": 400,
+          "std_dev": 50,
+          "max_acceptable": 1000,
+          "note": "1000 files with 8-core parallelism",
+          "speedup_over_sequential": "~6x"
+        }
+      }
+    },
+    "end_to_end": {
+      "description": "Complete indexing workflow (discover + parse + insert)",
+      "unit": "milliseconds (ms)",
+      "targets": {
+        "small_project_100_files": {
+          "mean": 200,
+          "std_dev": 50,
+          "max_acceptable": 500,
+          "note": "Typical small project"
+        },
+        "medium_project_1000_files": {
+          "mean": 1500,
+          "std_dev": 200,
+          "max_acceptable": 4000,
+          "note": "Typical medium project"
+        },
+        "large_project_10000_files": {
+          "mean": 12000,
+          "std_dev": 2000,
+          "max_acceptable": 30000,
+          "note": "Large project (10K files)"
+        }
+      }
+    }
+  },
+  "regression_thresholds": {
+    "warning_percent": 10,
+    "error_percent": 25,
+    "note": "Alert if performance degrades by >10%, fail CI if >25% regression"
+  },
+  "how_to_run": {
+    "benchmark": "cargo bench --package analyzer-core",
+    "compare": "cargo bench --package analyzer-core -- --baseline baseline",
+    "save_baseline": "cargo bench --package analyzer-core -- --save-baseline baseline",
+    "generate_report": "cargo bench --package analyzer-core -- --output-format json > bench_results.json"
+  },
+  "ci_integration": {
+    "recommended_frequency": "Every pull request and nightly",
+    "alert_on_regression": true,
+    "store_historical_data": true,
+    "tools": [
+      "criterion.rs (Rust benchmarking)",
+      "critcmp (compare benchmark results)",
+      "GitHub Actions (CI automation)"
+    ]
+  }
+}
