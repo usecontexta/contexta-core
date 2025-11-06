@@ -198,3 +198,4 @@ site/
 *.orig
 *.rej
 .direnv/
+.mcp.json
