@@ -12,7 +12,7 @@ use bridge::{PyIndexer, PyIndexerConfig, PyFileMetadata};
 
 /// Initialize the Contexta Python module
 #[pymodule]
-fn contexta_bindings(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn _bindings(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_class::<PyIndexer>()?;
     m.add_class::<PyIndexerConfig>()?;
     m.add_class::<PyFileMetadata>()?;
