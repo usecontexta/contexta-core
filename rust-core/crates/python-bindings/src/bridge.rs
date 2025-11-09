@@ -9,8 +9,8 @@ use std::sync::Arc;
 use tokio::sync::Mutex;
 
 use analyzer_core::{
-    indexer::{IndexerConfig, discover_files, index_files_with_progress},
-    storage::{init_schema, upsert_file},
+    indexer::{IndexerConfig, discover_files},
+    storage::{init_schema, upsert_file, insert_symbol, delete_file_symbols, get_file_by_path},
     query::{
         list_files as query_list_files,
         get_language_stats as query_language_stats,
@@ -22,6 +22,9 @@ use analyzer_core::{
     },
     FileMetadata, Symbol,
 };
+use analyzer_python::analyze_python;
+use analyzer_typescript::analyze_typescript;
+use analyzer_rust::analyze_rust;
 
 /// Python wrapper for IndexerConfig
 #[pyclass]
@@ -296,7 +299,7 @@ impl PyIndexer {
                 indexed_files.push(PyFileMetadata::from(metadata));
             }
 
-            // Store in database
+            // Store in database and populate symbols via Tree-sitter analyzers
             tokio::task::spawn_blocking({
                 let db_path = db_path.clone();
                 let files_to_store = indexed_files.clone();
@@ -313,6 +316,46 @@ impl PyIndexer {
                             parse_errors: py_file.parse_errors,
                         };
                         upsert_file(&conn, &file_metadata)?;
+
+                        // Resolve file_id reliably and refresh symbols
+                        if let Some(db_file) = get_file_by_path(&conn, &py_file.path)? {
+                            let file_id = db_file.id.unwrap_or(0);
+                            if file_id > 0 {
+                                // Clear old symbols for re-indexing
+                                let _ = delete_file_symbols(&conn, file_id);
+
+                                // Read file content
+                                let source = std::fs::read_to_string(&py_file.path)
+                                    .unwrap_or_else(|_| String::new());
+
+                                // Select analyzer by language
+                                let mut extracted: Vec<Symbol> = Vec::new();
+                                match py_file.language.as_str() {
+                                    "python" => {
+                                        if let Ok(mut syms) = analyze_python(&source) {
+                                            extracted.append(&mut syms);
+                                        }
+                                    }
+                                    "typescript" | "javascript" => {
+                                        if let Ok(mut syms) = analyze_typescript(&source) {
+                                            extracted.append(&mut syms);
+                                        }
+                                    }
+                                    "rust" => {
+                                        if let Ok(mut syms) = analyze_rust(&source) {
+                                            extracted.append(&mut syms);
+                                        }
+                                    }
+                                    _ => {}
+                                }
+
+                                // Persist extracted symbols
+                                for mut sym in extracted {
+                                    sym.file_id = file_id;
+                                    let _ = insert_symbol(&conn, &sym);
+                                }
+                            }
+                        }
                     }
 
                     Ok::<(), anyhow::Error>(())

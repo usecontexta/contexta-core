@@ -9,6 +9,9 @@ crate-type = ["cdylib"]
 
 [dependencies]
 analyzer-core = { path = "../analyzer-core" }
+analyzer-python = { path = "../analyzer-python" }
+analyzer-typescript = { path = "../analyzer-typescript" }
+analyzer-rust = { path = "../analyzer-rust" }
 pyo3 = { version = "0.27", features = ["extension-module", "anyhow"] }
 pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"] }
 tokio = { version = "1", features = ["full"] }
