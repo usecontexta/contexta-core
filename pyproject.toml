@@ -1,0 +1,35 @@
+[build-system]
+requires = ["maturin>=1.4,<2.0"]
+build-backend = "maturin"
+
+[project]
+name = "contexta-core"
+version = "0.1.0"
+description = "Contexta code analysis core engine"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "Apache-2.0 OR MIT"}
+authors = [
+    {name = "Contexta Team", email = "team@contexta.dev"}
+]
+keywords = ["code-analysis", "tree-sitter", "static-analysis", "mcp"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Rust",
+]
+dependencies = []
+
+[tool.maturin]
+python-source = "python"
+module-name = "contexta_core._bindings"
+# Uses root Cargo.toml which builds the python-bindings crate
+strip = true

@@ -1,0 +1,36 @@
+[package]
+name = "contexta-core"
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.75"
+
+[lib]
+name = "contexta_core"
+crate-type = ["cdylib"]
+path = "src/crates/python-bindings/src/lib.rs"
+
+[dependencies]
+# Use analyzer-core from the workspace
+analyzer-core = { path = "src/crates/analyzer-core" }
+analyzer-python = { path = "src/crates/analyzer-python" }
+analyzer-typescript = { path = "src/crates/analyzer-typescript" }
+analyzer-rust = { path = "src/crates/analyzer-rust" }
+
+# PyO3 for Python bindings
+pyo3 = { version = "0.27", features = ["extension-module", "abi3-py39"] }
+pyo3-async-runtimes = { version = "0.27", features = ["tokio-runtime"] }
+
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+
+# Error handling
+anyhow = "1.0"
+
+# Serialization
+serde_json = "1.0"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true
