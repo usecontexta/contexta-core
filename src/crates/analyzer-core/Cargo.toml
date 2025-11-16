@@ -6,6 +6,10 @@ rust-version.workspace = true
 authors.workspace = true
 license.workspace = true
 
+[features]
+default = []
+deep-mode = []  # Enterprise feature: enables advanced analysis capabilities
+
 [dependencies]
 # Tree-sitter
 tree-sitter.workspace = true

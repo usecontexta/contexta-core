@@ -9,6 +9,10 @@ name = "contexta_core"
 crate-type = ["cdylib"]
 path = "src/crates/python-bindings/src/lib.rs"
 
+[features]
+default = []
+deep-mode = ["analyzer-core/deep-mode"]
+
 [dependencies]
 # Use analyzer-core from the workspace
 analyzer-core = { path = "src/crates/analyzer-core" }

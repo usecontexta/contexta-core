@@ -67,6 +67,65 @@ Check if a client version is compatible with this core version.
 
 **Returns:** `bool` - True if compatible
 
+## Enterprise Features
+
+### Deep Mode
+
+Deep Mode is an advanced analysis capability for enterprise use cases requiring enhanced compliance and audit trails.
+
+**Features:**
+- Advanced type inference across compilation boundaries
+- Cross-project dependency resolution
+- Comprehensive audit trail generation
+- Enhanced semantic analysis
+
+**Installation:**
+
+Deep Mode requires the package to be built with the `deep-mode` feature flag:
+
+```bash
+# Build with Deep Mode enabled
+maturin build --release --features deep-mode
+
+# Install the wheel
+pip install target/wheels/contexta_core-*.whl
+```
+
+**Usage:**
+
+```python
+from contexta_core import analyze, AnalysisConfig
+
+# Define audit callback for compliance tracking
+def audit_callback(event_type: str, data: dict):
+    print(f"Audit: {event_type} - {data}")
+    # Log to your compliance system here
+
+# Configure Deep Mode
+config = AnalysisConfig(
+    enable_deep_mode=True,
+    audit_callback=audit_callback
+)
+
+result = analyze('/path/to/project', config)
+```
+
+**Requirements:**
+- Deep Mode **requires** an audit callback for compliance
+- Recommended for enterprise environments with audit requirements
+- Contact sales@contexta.dev for enterprise licensing
+
+**Check availability:**
+
+```python
+from contexta_core import capabilities
+
+if 'deep-mode' in capabilities():
+    print("Deep Mode is available")
+else:
+    print("Deep Mode not compiled in - install enterprise package")
+```
+
 ## Development
 
 ### Building from Source

@@ -6,6 +6,11 @@ pub mod storage;
 pub mod query;
 pub mod incremental;
 
+// Analysis modules
+pub mod analysis {
+    pub mod deep;
+}
+
 use serde::{Deserialize, Serialize};
 
 /// Represents a code symbol (function, class, variable, etc.)
