@@ -37,4 +37,5 @@ jobs:
         run: pip install dist/contexta_core-*.whl
 
       - name: Run Python tests
-        run: pytest python/tests/ -v
+        run: python -m pytest -v "$GITHUB_WORKSPACE/python/tests"
+        working-directory: ${{ runner.temp }}
