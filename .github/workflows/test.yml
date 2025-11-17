@@ -24,14 +24,17 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
 
-      - name: Install Maturin
+      - name: Install Maturin and pytest
         run: pip install maturin pytest
 
       - name: Run Rust tests
         run: cargo test
 
-      - name: Build Python package
-        run: maturin develop
+      - name: Build wheel with maturin
+        run: maturin build --release --out dist
+
+      - name: Install built wheel
+        run: pip install dist/contexta_core-*.whl
 
       - name: Run Python tests
         run: pytest python/tests/ -v
