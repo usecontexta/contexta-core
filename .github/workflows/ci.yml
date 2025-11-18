@@ -50,7 +50,7 @@ jobs:
         run: cargo clippy --all-features -- -D warnings
 
       - name: Build development install for testing
-        run: maturin develop --release
+        run: pip install -e .
 
       - name: Run Python tests
         run: pytest -v python/tests/
