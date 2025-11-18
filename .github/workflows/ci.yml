@@ -49,16 +49,14 @@ jobs:
       - name: Run Rust clippy
         run: cargo clippy --all-features -- -D warnings
 
-      - name: Build wheel with maturin
-        run: maturin build --release --out dist
-
-      - name: Install built wheel
-        shell: bash
-        run: |
-          pip install dist/contexta_core-*.whl
+      - name: Build development install for testing
+        run: maturin develop --release
 
       - name: Run Python tests
         run: pytest -v python/tests/
+
+      - name: Build wheel for distribution
+        run: maturin build --release --out dist
 
       - name: Run mypy type checking
         run: mypy python/contexta_core --strict --ignore-missing-imports
