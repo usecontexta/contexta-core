@@ -1,30 +1,26 @@
 // PyO3 bridge module - Exposes Rust analyzer functions to Python
 // Implements async bridge with error propagation
 
-use pyo3::prelude::*;
 use pyo3::exceptions::{PyRuntimeError, PyValueError};
+use pyo3::prelude::*;
 use pyo3_async_runtimes::tokio::future_into_py;
 use std::path::PathBuf;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
 use analyzer_core::{
-    indexer::{IndexerConfig, discover_files},
-    storage::{init_schema, upsert_file, insert_symbol, delete_file_symbols, get_file_by_path},
+    indexer::{discover_files, IndexerConfig},
     query::{
+        find_exports_by_file, find_imports_by_file, find_symbols_by_file_path,
+        find_symbols_by_name, get_file_path_by_id, get_language_stats as query_language_stats,
         list_files as query_list_files,
-        get_language_stats as query_language_stats,
-        find_symbols_by_name,
-        find_symbols_by_file_path,
-        find_imports_by_file,
-        find_exports_by_file,
-        get_file_path_by_id,
     },
+    storage::{delete_file_symbols, get_file_by_path, init_schema, insert_symbol, upsert_file},
     FileMetadata, Symbol,
 };
 use analyzer_python::analyze_python;
-use analyzer_typescript::analyze_typescript;
 use analyzer_rust::analyze_rust;
+use analyzer_typescript::analyze_typescript;
 
 /// Python wrapper for IndexerConfig
 #[pyclass]
@@ -215,8 +211,9 @@ pub struct PyIndexer {
 impl PyIndexer {
     #[new]
     fn new(db_path: String) -> PyResult<Self> {
-        let runtime = tokio::runtime::Runtime::new()
-            .map_err(|e| PyRuntimeError::new_err(format!("Failed to create Tokio runtime: {}", e)))?;
+        let runtime = tokio::runtime::Runtime::new().map_err(|e| {
+            PyRuntimeError::new_err(format!("Failed to create Tokio runtime: {}", e))
+        })?;
 
         Ok(Self {
             db_path: PathBuf::from(db_path),
@@ -226,8 +223,9 @@ impl PyIndexer {
 
     /// Initialize database schema
     fn init_database(&self) -> PyResult<()> {
-        init_schema(&self.db_path)
-            .map_err(|e| PyRuntimeError::new_err(format!("Failed to initialize database: {}", e)))?;
+        init_schema(&self.db_path).map_err(|e| {
+            PyRuntimeError::new_err(format!("Failed to initialize database: {}", e))
+        })?;
         Ok(())
     }
 
@@ -238,7 +236,10 @@ impl PyIndexer {
         let files = discover_files(&rust_config)
             .map_err(|e| PyRuntimeError::new_err(format!("File discovery failed: {}", e)))?;
 
-        Ok(files.iter().map(|p| p.to_string_lossy().to_string()).collect())
+        Ok(files
+            .iter()
+            .map(|p| p.to_string_lossy().to_string())
+            .collect())
     }
 
     /// Index files with progress reporting (async)
@@ -294,7 +295,9 @@ impl PyIndexer {
                 })
                 .await
                 .map_err(|e| PyRuntimeError::new_err(format!("Task join error: {}", e)))?
-                .map_err(|e: anyhow::Error| PyRuntimeError::new_err(format!("Metadata error: {}", e)))?;
+                .map_err(|e: anyhow::Error| {
+                    PyRuntimeError::new_err(format!("Metadata error: {}", e))
+                })?;
 
                 indexed_files.push(PyFileMetadata::from(metadata));
             }
@@ -363,7 +366,9 @@ impl PyIndexer {
             })
             .await
             .map_err(|e| PyRuntimeError::new_err(format!("Task join error: {}", e)))?
-            .map_err(|e: anyhow::Error| PyRuntimeError::new_err(format!("Database error: {}", e)))?;
+            .map_err(|e: anyhow::Error| {
+                PyRuntimeError::new_err(format!("Database error: {}", e))
+            })?;
 
             Ok(indexed_files)
         })
