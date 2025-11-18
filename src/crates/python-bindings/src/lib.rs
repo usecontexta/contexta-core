@@ -12,7 +12,7 @@ use bridge::{PyFileMetadata, PyIndexer, PyIndexerConfig};
 #[pyfunction]
 fn analyze(py: Python, _source: String, _config: Option<PyObject>) -> PyResult<PyObject> {
     // Create empty result dict
-    let result = PyDict::new_bound(py);
+    let result = PyDict::new(py);
     result.set_item("symbols", Vec::<String>::new())?;
     result.set_item("dependencies", Vec::<String>::new())?;
     Ok(result.into())
