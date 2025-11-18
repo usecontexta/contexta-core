@@ -8,7 +8,7 @@ pub mod symbol_extract;
 pub use parser::PythonParser;
 pub use symbol_extract::extract_symbols;
 
-use analyzer_core::{Symbol, SymbolKind};
+use analyzer_core::Symbol;
 use anyhow::Result;
 
 /// Analyze a Python source file and extract symbols

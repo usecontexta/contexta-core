@@ -229,11 +229,11 @@ fn extract_import(node: Node, source: &str, scope: Option<&str>) -> Result<Optio
 }
 
 /// Extract an export statement
-fn extract_export(node: Node, source: &str, scope: Option<&str>) -> Result<Option<Symbol>> {
+fn extract_export(node: Node, _source: &str, _scope: Option<&str>) -> Result<Option<Symbol>> {
     // Check if it's a named export
     let declaration = node.child_by_field_name("declaration");
 
-    if let Some(decl_node) = declaration {
+    if let Some(_decl_node) = declaration {
         // Extract the exported declaration recursively
         // For now, just skip - we'll handle the declaration itself when we encounter it
         Ok(None)

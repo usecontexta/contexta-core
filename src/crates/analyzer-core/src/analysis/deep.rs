@@ -58,8 +58,8 @@ pub struct DeepMode {
     enabled: bool,
     /// Audit trail of all analysis events
     audit_trail: Vec<AuditEvent>,
-    /// Configuration parameters
-    config: HashMap<String, String>,
+    /// Configuration parameters (reserved for future use)
+    _config: HashMap<String, String>,
 }
 
 #[cfg(feature = "deep-mode")]
@@ -69,7 +69,7 @@ impl DeepMode {
         Self {
             enabled: true,
             audit_trail: Vec::new(),
-            config: HashMap::new(),
+            _config: HashMap::new(),
         }
     }
 

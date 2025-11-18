@@ -1,12 +1,11 @@
 // PyO3 bridge module - Exposes Rust analyzer functions to Python
 // Implements async bridge with error propagation
 
-use pyo3::exceptions::{PyRuntimeError, PyValueError};
+use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3_async_runtimes::tokio::future_into_py;
 use std::path::PathBuf;
 use std::sync::Arc;
-use tokio::sync::Mutex;
 
 use analyzer_core::{
     indexer::{discover_files, IndexerConfig},
@@ -247,11 +246,11 @@ impl PyIndexer {
         &self,
         py: Python<'py>,
         config: &PyIndexerConfig,
-        progress_callback: Option<PyObject>,
+        progress_callback: Option<Py<PyAny>>,
     ) -> PyResult<Bound<'py, PyAny>> {
         let rust_config: IndexerConfig = config.into();
         let db_path = self.db_path.clone();
-        let runtime = self.runtime.clone();
+        let _runtime = self.runtime.clone();
 
         future_into_py(py, async move {
             // Run blocking file indexing in Tokio thread pool
@@ -270,7 +269,7 @@ impl PyIndexer {
             for (index, file_path) in files.iter().enumerate() {
                 // Call progress callback if provided
                 if let Some(ref callback) = progress_callback {
-                    Python::with_gil(|py| {
+                    Python::attach(|py| {
                         let _ = callback.call1(py, (index + 1, total));
                     });
                 }

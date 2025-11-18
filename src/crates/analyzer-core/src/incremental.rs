@@ -5,7 +5,6 @@ use anyhow::{Context, Result};
 use notify::{Config, Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
 use std::path::{Path, PathBuf};
 use std::sync::mpsc::{channel, Receiver};
-use std::time::SystemTime;
 use std::fs;
 
 use crate::FileMetadata;
@@ -18,7 +17,7 @@ pub fn is_file_modified(
     let metadata = fs::metadata(file_path)
         .context("Failed to read file metadata")?;
 
-    let modified_time = metadata
+    let _modified_time = metadata
         .modified()
         .context("Failed to get file modified time")?;
 
@@ -76,7 +75,7 @@ pub struct FileWatcher {
 
 impl FileWatcher {
     /// Create a new file watcher for the given root directory
-    pub fn new(root: &Path) -> Result<Self> {
+    pub fn new(_root: &Path) -> Result<Self> {
         let (tx, rx) = channel();
 
         let watcher = RecommendedWatcher::new(
