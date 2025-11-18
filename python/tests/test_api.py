@@ -1,7 +1,12 @@
 """Unit tests for capabilities() and check_compatibility() functions."""
 
 import pytest
-from contexta_core import capabilities, check_compatibility, __version__, __api_version__
+from contexta_core import (
+    capabilities,
+    check_compatibility,
+    __version__,
+    __api_version__,
+)
 
 
 class TestCapabilities:
@@ -21,7 +26,7 @@ class TestCapabilities:
     def test_capabilities_has_analyze(self):
         """Test that capabilities includes 'analyze'."""
         caps = capabilities()
-        assert 'analyze' in caps
+        assert "analyze" in caps
 
     def test_capabilities_is_not_empty(self):
         """Test that capabilities list is not empty."""
@@ -39,8 +44,8 @@ class TestCapabilities:
         caps = capabilities()
         # Deep mode may or may not be available depending on build
         # This test just verifies that if it's present, it's a valid string
-        if 'deep-mode' in caps:
-            assert isinstance('deep-mode', str)
+        if "deep-mode" in caps:
+            assert isinstance("deep-mode", str)
 
 
 class TestCheckCompatibility:
@@ -109,7 +114,7 @@ class TestVersionConstants:
 
     def test_version_format(self):
         """Test that __version__ follows semantic versioning."""
-        parts = __version__.split('.')
+        parts = __version__.split(".")
         assert len(parts) == 3
         for part in parts:
             assert part.isdigit()
@@ -124,7 +129,7 @@ class TestVersionConstants:
 
     def test_api_version_format(self):
         """Test that __api_version__ follows semantic versioning."""
-        parts = __api_version__.split('.')
+        parts = __api_version__.split(".")
         assert len(parts) == 3
         for part in parts:
             assert part.isdigit()
@@ -181,7 +186,7 @@ class TestAPIConsistency:
         """Test that capabilities don't contain spaces."""
         caps = capabilities()
         for cap in caps:
-            assert ' ' not in cap
+            assert " " not in cap
 
     def test_check_compatibility_deterministic(self):
         """Test that check_compatibility() is deterministic."""
@@ -197,15 +202,18 @@ class TestImportability:
     def test_can_import_capabilities(self):
         """Test that capabilities can be imported directly."""
         from contexta_core import capabilities as caps_func
+
         assert callable(caps_func)
 
     def test_can_import_check_compatibility(self):
         """Test that check_compatibility can be imported directly."""
         from contexta_core import check_compatibility as compat_func
+
         assert callable(compat_func)
 
     def test_can_import_version_constants(self):
         """Test that version constants can be imported."""
         from contexta_core import __version__, __api_version__
+
         assert isinstance(__version__, str)
         assert isinstance(__api_version__, str)

@@ -4,14 +4,12 @@ This file provides type hints for functions implemented in Rust and exposed via 
 """
 
 from pathlib import Path
-from typing import Optional, List, Dict, Any
+from typing import Optional, List
 from .config import AnalysisConfig
 from .result import AnalysisResult
 
-
 def analyze(
-    source: str | Path,
-    config: Optional[AnalysisConfig] = None
+    source: str | Path, config: Optional[AnalysisConfig] = None
 ) -> AnalysisResult:
     """Analyze a source file or directory using the Rust analyzer core.
 
@@ -41,7 +39,6 @@ def analyze(
     """
     ...
 
-
 def capabilities() -> List[str]:
     """Return list of available analyzer capabilities.
 
@@ -59,7 +56,6 @@ def capabilities() -> List[str]:
         ...     print("Deep Mode is available")
     """
     ...
-
 
 def check_compatibility(client_version: str) -> bool:
     """Check if a client version is compatible with this core version.

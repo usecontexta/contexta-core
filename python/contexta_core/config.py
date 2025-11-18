@@ -1,7 +1,6 @@
 """Configuration dataclasses for code analysis."""
 
 from dataclasses import dataclass, field
-from pathlib import Path
 from typing import Optional, List, Callable, Any
 
 
@@ -22,16 +21,18 @@ class AnalysisConfig:
 
     enable_deep_mode: bool = False
     max_file_size: int = 10 * 1024 * 1024  # 10MB
-    exclude_patterns: List[str] = field(default_factory=lambda: [
-        "**/node_modules/**",
-        "**/.git/**",
-        "**/__pycache__/**",
-        "**/target/**",
-        "**/.venv/**",
-        "**/venv/**",
-        "**/.pytest_cache/**",
-        "**/*.min.js",
-    ])
+    exclude_patterns: List[str] = field(
+        default_factory=lambda: [
+            "**/node_modules/**",
+            "**/.git/**",
+            "**/__pycache__/**",
+            "**/target/**",
+            "**/.venv/**",
+            "**/venv/**",
+            "**/.pytest_cache/**",
+            "**/*.min.js",
+        ]
+    )
     include_patterns: Optional[List[str]] = None
     max_depth: Optional[int] = None
     follow_symlinks: bool = False

@@ -43,8 +43,7 @@ except ImportError as e:
 
 
 def analyze(
-    source: str | Path,
-    config: Optional[AnalysisConfig] = None
+    source: str | Path, config: Optional[AnalysisConfig] = None
 ) -> AnalysisResult:
     """Analyze source code and extract symbols and dependencies.
 
