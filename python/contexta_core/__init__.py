@@ -122,7 +122,9 @@ def _analyze_python_source(source_path: Path, config: AnalysisConfig) -> Analysi
     return result
 
 
-def _collect_symbols_from_ast(node: ast.AST, file_path: Path, scope: Optional[str] = None) -> List[Symbol]:
+def _collect_symbols_from_ast(
+    node: ast.AST, file_path: Path, scope: Optional[str] = None
+) -> List[Symbol]:
     """Recursively collect symbols from an AST tree."""
     symbols: List[Symbol] = []
 
