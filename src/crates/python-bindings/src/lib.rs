@@ -22,6 +22,7 @@ fn analyze(py: Python, _source: String, _config: Option<PyObject>) -> PyResult<P
 #[pyfunction]
 fn capabilities() -> PyResult<Vec<String>> {
     let mut caps = vec![
+        "analyze".to_string(),
         "python".to_string(),
         "typescript".to_string(),
         "javascript".to_string(),
