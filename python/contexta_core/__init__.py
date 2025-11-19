@@ -29,10 +29,9 @@ from .result import AnalysisResult, Symbol, Dependency, SymbolKind
 __version__ = "0.1.0"
 __api_version__ = "1.0.0"  # Semantic versioning for API compatibility
 
-# Import Rust bindings
+# Import Rust bindings for capabilities and version checks.
 try:
     from ._bindings import (
-        analyze as _rust_analyze,
         capabilities as _rust_capabilities,
         check_compatibility as _rust_check_compatibility,
     )
