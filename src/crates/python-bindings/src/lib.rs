@@ -13,7 +13,11 @@ use bridge::{PyFileMetadata, PyIndexer, PyIndexerConfig};
 /// Uses modern PyO3 types instead of the deprecated `PyObject` alias so that
 /// builds with `-D warnings` (e.g. CI) do not fail on deprecation.
 #[pyfunction]
-fn analyze(py: Python<'_>, _source: String, _config: Option<Py<PyAny>>) -> PyResult<Bound<'_, PyDict>> {
+fn analyze(
+    py: Python<'_>,
+    _source: String,
+    _config: Option<Py<PyAny>>,
+) -> PyResult<Bound<'_, PyDict>> {
     // Create empty result dict
     let result = PyDict::new(py);
     result.set_item("symbols", Vec::<String>::new())?;
